@@ -2,19 +2,19 @@
 
 **One skill that lets Codex, Claude Code, or Cursor transfer saved conversations from any of the three tools between computers or project folders.**
 
-Install **`ai-chat-transfer`** in the assistant you want to perform the work, then describe the conversation and destination. The assistant follows the appropriate storage procedure, copies the selected conversation, checks the destination, and explains how to resume it.
+Clone this repository and open it in Codex, Claude Code, or Cursor. Each assistant already has a project copy of **`ai-chat-transfer`**. Describe the conversation and destination. The assistant follows the appropriate storage procedure, copies the selected conversation, checks the destination, and explains how to resume it.
 
 For example, Codex can copy a Claude Code conversation to another computer, and Cursor can relocate a Codex conversation to another project folder. The conversation still resumes in the application that created it: this skill transfers saved chats, not chat formats between applications.
 
 ## What is included
 
-| Assistant performing the transfer | Install from | Conversation formats covered |
+| Assistant performing the transfer | Skill directory in this repository | Conversation formats covered |
 | --- | --- | --- |
-| Codex | [`codex/`](codex/SKILL.md) | Codex, Claude Code, Cursor |
-| Claude Code | [`claude/`](claude/SKILL.md) | Codex, Claude Code, Cursor |
-| Cursor | [`cursor/`](cursor/SKILL.md) | Codex, Claude Code, Cursor |
+| Codex | [`.agents/skills/ai-chat-transfer/`](.agents/skills/ai-chat-transfer/SKILL.md) | Codex, Claude Code, Cursor |
+| Claude Code | [`.claude/skills/ai-chat-transfer/`](.claude/skills/ai-chat-transfer/SKILL.md) | Codex, Claude Code, Cursor |
+| Cursor | [`.cursor/skills/ai-chat-transfer/`](.cursor/skills/ai-chat-transfer/SKILL.md) | Codex, Claude Code, Cursor |
 
-All three folders contain identical, complete copies of the skill. You need only one copy per assistant. The folder names organize installation choices; they do not limit which conversations an assistant can transfer.
+All three directories contain identical, complete copies of the skill. Opening this repository is enough for each assistant to discover its own copy. The directory names match each assistant's project skill location; they do not limit which conversations an assistant can transfer.
 
 Each distribution contains:
 
@@ -41,7 +41,7 @@ The commands below use a POSIX shell, suitable for Linux, macOS, or an appropria
 
 ## Installation
 
-### 1. Download the repository
+### Use this repository
 
 Download and extract the repository ZIP, or clone it:
 
@@ -50,9 +50,21 @@ git clone https://github.com/numanzahid/ai-chat-transfer.git
 cd ai-chat-transfer
 ```
 
-Run the installation commands below from this repository's root. They are for a fresh installation. If `ai-chat-transfer` already exists at the destination, inspect or back it up first rather than creating an extra nested directory or overwriting customizations.
+Open that folder in Codex, Claude Code, or Cursor. Each assistant's project skill directory is already in the repository:
 
-### 2. Choose personal or project installation
+| Assistant | Path in this repository |
+| --- | --- |
+| Codex | `.agents/skills/ai-chat-transfer/` |
+| Claude Code | `.claude/skills/ai-chat-transfer/` |
+| Cursor | `.cursor/skills/ai-chat-transfer/` |
+
+These locations follow the [official Codex skill documentation](https://learn.chatgpt.com/docs/build-skills), [Claude Code skill documentation](https://code.claude.com/docs/en/skills), and [Cursor skill documentation](https://cursor.com/help/customization/skills). Codex's skill discovery directory is separate from its conversation storage directory, which is commonly `~/.codex`.
+
+No copy step is required to use the skill in this folder. Start a new assistant session here, or reload the application if the skill is not discovered.
+
+### Install for every project, or into a different project
+
+Copy one directory when you want the skill outside this repository. Run the commands below from this repository's root. They are for a fresh installation. If `ai-chat-transfer` already exists at the destination, inspect or back it up first rather than creating an extra nested directory or overwriting customizations.
 
 Personal installation makes the skill available across your local projects. Project installation keeps it with a particular project. `~` means the home directory of the user running the assistant; `<project>` means your target project's root.
 
@@ -62,61 +74,59 @@ Personal installation makes the skill available across your local projects. Proj
 | Claude Code | `~/.claude/skills/ai-chat-transfer/` | `<project>/.claude/skills/ai-chat-transfer/` |
 | Cursor | `~/.cursor/skills/ai-chat-transfer/` | `<project>/.cursor/skills/ai-chat-transfer/` |
 
-These locations follow the [official Codex skill documentation](https://learn.chatgpt.com/docs/build-skills), [Claude Code skill documentation](https://code.claude.com/docs/en/skills), and [Cursor skill documentation](https://cursor.com/help/customization/skills). Codex's skill discovery directory is separate from its conversation storage directory, which is commonly `~/.codex`.
-
-### Codex
+#### Codex
 
 Personal installation:
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-cp -R codex "$HOME/.agents/skills/ai-chat-transfer"
+cp -R .agents/skills/ai-chat-transfer "$HOME/.agents/skills/"
 ```
 
 Project installation instead:
 
 ```bash
 mkdir -p /absolute/path/to/project/.agents/skills
-cp -R codex /absolute/path/to/project/.agents/skills/ai-chat-transfer
+cp -R .agents/skills/ai-chat-transfer /absolute/path/to/project/.agents/skills/
 ```
 
-### Claude Code
+#### Claude Code
 
 Personal installation:
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
-cp -R claude "$HOME/.claude/skills/ai-chat-transfer"
+cp -R .claude/skills/ai-chat-transfer "$HOME/.claude/skills/"
 ```
 
 Project installation instead:
 
 ```bash
 mkdir -p /absolute/path/to/project/.claude/skills
-cp -R claude /absolute/path/to/project/.claude/skills/ai-chat-transfer
+cp -R .claude/skills/ai-chat-transfer /absolute/path/to/project/.claude/skills/
 ```
 
-### Cursor
+#### Cursor
 
 Personal installation:
 
 ```bash
 mkdir -p "$HOME/.cursor/skills"
-cp -R cursor "$HOME/.cursor/skills/ai-chat-transfer"
+cp -R .cursor/skills/ai-chat-transfer "$HOME/.cursor/skills/"
 ```
 
 Project installation instead:
 
 ```bash
 mkdir -p /absolute/path/to/project/.cursor/skills
-cp -R cursor /absolute/path/to/project/.cursor/skills/ai-chat-transfer
+cp -R .cursor/skills/ai-chat-transfer /absolute/path/to/project/.cursor/skills/
 ```
 
 Replace `/absolute/path/to/project` with your real path and quote it if it contains spaces. Choose either the personal or project installation for each assistant. Some assistants also discover compatible skill directories belonging to other tools; avoid redundant installations if the skill already appears.
 
-### 3. Confirm discovery
+### Confirm discovery
 
-Start a new assistant session, or reload the application if the skill is not discovered. For a project installation, open that project. Check that the installed file is exactly `<skill-directory>/ai-chat-transfer/SKILL.md`, with no extra `codex`, `claude`, or `cursor` directory between them.
+Start a new assistant session, or reload the application if the skill is not discovered. For a project installation, open that project. Check that the installed file is exactly `<skill-directory>/ai-chat-transfer/SKILL.md`.
 
 Ask the assistant whether `ai-chat-transfer` is available, or look for it in its skill selector. In Cursor, check **Customize → Skills**. See [Cursor's skill documentation](https://cursor.com/docs/skills).
 
@@ -257,7 +267,7 @@ The assistant should confirm the installed CLI syntax and give you commands for 
 - **Historical paths:** Old absolute paths may remain in messages. The resumed assistant needs the new working directory and available project files.
 - **Credentials stay separate:** Destination authentication and required tools must be available independently; the skill does not copy account credentials.
 - **Selected data only:** Memory, unrelated chats, and global settings are not included by default. Existing destination chats must not be silently overwritten.
-- **Codex history:** Paginated sessions can require SQLite history records as well as JSONL transcripts. See the bundled [storage procedure](codex/references/storage-transfer.md).
+- **Codex history:** Paginated sessions can require SQLite history records as well as JSONL transcripts. See the bundled [storage procedure](.agents/skills/ai-chat-transfer/references/storage-transfer.md).
 - **Claude helper limitations:** The script assumes a conventional storage layout and simple paths, copies main transcripts only, and can overwrite destination files. Without explicit session selection it may copy all project sessions. The skill requires preflight checks and an explicit `--session`; incompatible paths or required companion data need another transfer method.
 
 The Codex procedure was derived from a transfer between CLI versions 0.155.1 and 0.154.0, with storage records verified. That observation is not an end-to-end compatibility guarantee for every version or application.
@@ -279,6 +289,6 @@ The Codex procedure was derived from a transfer between CLI versions 0.155.1 and
 
 To update an installed copy, compare it with the new distribution and preserve any local edits before replacing it. Reload the assistant if necessary. Remove duplicate older installations if they cause ambiguous skill selection.
 
-For contributors, keep `codex/`, `claude/`, and `cursor/` byte-for-byte identical, including supporting files. Use the same frontmatter name, `ai-chat-transfer`, in every `SKILL.md`. Validate referenced files and script syntax when changing the distributions.
+For contributors, keep `.agents/skills/ai-chat-transfer/`, `.claude/skills/ai-chat-transfer/`, and `.cursor/skills/ai-chat-transfer/` byte-for-byte identical, including supporting files. Use the same frontmatter name, `ai-chat-transfer`, in every `SKILL.md`. Validate referenced files and script syntax when changing the distributions.
 
 This repository contains reusable instructions and supporting code. Do not contribute real chat exports, databases, authentication files, private hostnames, or personal filesystem paths.
