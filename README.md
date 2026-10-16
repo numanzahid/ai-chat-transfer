@@ -20,12 +20,18 @@ Each distribution contains:
 
 ```text
 ai-chat-transfer/                 # Installed folder name
-├── SKILL.md                      # Shared workflow and all three procedures
+├── SKILL.md                      # Shared rules and application routing
 ├── references/
+│   ├── codex.md                  # Codex resume and copy procedures
+│   ├── claude-code.md            # Claude Code procedure and helper usage
+│   ├── cursor.md                 # Cursor procedure and client discovery
 │   └── storage-transfer.md       # Detailed Codex storage migration procedure
 └── scripts/
-    └── transfer-chat.sh          # Limited Claude Code transcript-copy helper
+    ├── transfer-chat.sh          # Bash entrypoint for the Claude helper
+    └── transfer-chat.py          # Validated, collision-protected transcript copy
 ```
+
+The agent reads the shared rules, then only the reference for the application that owns the selected chat. Codex storage migration loads its detailed storage reference when needed.
 
 Copy the entire distribution, including its supporting directories. Copying only `SKILL.md` leaves the Codex reference and Claude helper unavailable.
 
@@ -35,7 +41,7 @@ Copy the entire distribution, including its supporting directories. Copying only
 - The original chat application installed and independently authenticated on the destination if you want to continue the chat there.
 - For transfers over SSH, a reachable destination with working SSH authentication. The assistant may use tools such as `scp` or `rsync`.
 - Compatible source and destination storage formats. The assistant must inspect installed versions and schemas before migration.
-- Appropriate local utilities for the selected procedure: the Claude helper needs Bash; Codex database inspection commonly uses Python 3 with SQLite support.
+- Appropriate local utilities for the selected procedure: the Claude helper needs Bash and Python 3 (also Python 3 on an SSH destination); Codex database inspection commonly uses Python 3 with SQLite support.
 
 The commands below use a POSIX shell, suitable for Linux, macOS, or an appropriate WSL environment. Native Windows paths and shell commands need adaptation. Install the skill in the environment where the assistant actually runs; a skill installed on your laptop is not automatically installed inside a remote worker or container.
 
@@ -245,7 +251,7 @@ Use the application that originally created the chat. After connecting to the de
 codex resume <SESSION_ID> --cd /absolute/destination/project
 ```
 
-For a nondefault Codex home, use the destination's `CODEX_HOME` setting. Resuming in another folder on the same machine reuses the session; it does not make an independent duplicate.
+For a nondefault Codex home, use the destination's `CODEX_HOME` setting. Resuming in another folder on the same machine reuses the session; it does not make an independent duplicate. An independent local copy needs a separate Codex home and the storage migration procedure, or a verified application-supported fork operation.
 
 **Claude Code:**
 
@@ -268,7 +274,7 @@ The assistant should confirm the installed CLI syntax and give you commands for 
 - **Credentials stay separate:** Destination authentication and required tools must be available independently; the skill does not copy account credentials.
 - **Selected data only:** Memory, unrelated chats, and global settings are not included by default. Existing destination chats must not be silently overwritten.
 - **Codex history:** Paginated sessions can require SQLite history records as well as JSONL transcripts. See the bundled [storage procedure](.agents/skills/ai-chat-transfer/references/storage-transfer.md).
-- **Claude helper limitations:** The script assumes a conventional storage layout and simple paths, copies main transcripts only, and can overwrite destination files. Without explicit session selection it may copy all project sessions. The skill requires preflight checks and an explicit `--session`; incompatible paths or required companion data need another transfer method.
+- **Claude helper limitations:** The helper requires explicit `--session` selection and refuses to overwrite existing files. It checks JSONL and SHA-256 hashes and transports remote paths as data. It still requires verified slash-only workspace encoding and copies main transcripts only; required companions need separate handling. Custom config directories can be supplied with `--source-config-dir` and `--destination-config-dir`. A partial batch failure reports created files for inspection before retrying.
 
 The Codex procedure was derived from a transfer between CLI versions 0.155.1 and 0.154.0, with storage records verified. That observation is not an end-to-end compatibility guarantee for every version or application.
 
@@ -289,6 +295,19 @@ The Codex procedure was derived from a transfer between CLI versions 0.155.1 and
 
 To update an installed copy, compare it with the new distribution and preserve any local edits before replacing it. Reload the assistant if necessary. Remove duplicate older installations if they cause ambiguous skill selection.
 
-For contributors, keep `.agents/skills/ai-chat-transfer/`, `.claude/skills/ai-chat-transfer/`, and `.cursor/skills/ai-chat-transfer/` byte-for-byte identical, including supporting files. Use the same frontmatter name, `ai-chat-transfer`, in every `SKILL.md`. Validate referenced files and script syntax when changing the distributions.
+For contributors, edit `.agents/skills/ai-chat-transfer/` as the master, then copy the complete distribution to `.claude/skills/ai-chat-transfer/` and `.cursor/skills/ai-chat-transfer/`. Keep `.agents/skills/ai-chat-transfer/`, `.claude/skills/ai-chat-transfer/`, and `.cursor/skills/ai-chat-transfer/` byte-for-byte identical, including supporting files. Use the same frontmatter name, `ai-chat-transfer`, in every `SKILL.md`. Validate referenced files and script syntax when changing the distributions.
 
 This repository contains reusable instructions and supporting code. Do not contribute real chat exports, databases, authentication files, private hostnames, or personal filesystem paths.
+
+### Validation
+
+Run the isolated helper regression tests from the repository root:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+bash -n .agents/skills/ai-chat-transfer/scripts/transfer-chat.sh
+```
+
+The tests use synthetic transcripts and temporary config directories. They cover explicit selection, existing-file and symlink collisions, a collision during installation, batch preflight, private file permissions, malformed inputs, and remote command execution through a local shell. They do not contact an SSH host or test application continuation.
+
+For application compatibility tests, record the executing agent, source and destination application/client versions, storage layout, verification performed, and whether the destination resumed and accepted a follow-up message. Keep chat content and machine identifiers out of published results. Procedure coverage across all three agents and chat formats does not imply every version combination has been tested.
